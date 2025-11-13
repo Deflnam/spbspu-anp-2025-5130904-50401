@@ -1,4 +1,4 @@
-#include "iostream"
+#include <iostream>
 #include <cstddef>
 #include <cstdlib>
 #include <fstream>
@@ -64,7 +64,7 @@ int burukov::countLocalMaxima(const int* matrix, size_t rows, size_t cols)
 
 int main(int argc, char* argv[])
 {
-    if (argc != 4) {
+  if (argc != 4) {
     std::cerr << "Error: ";
     if (argc < 4) {
       std::cerr << "Not enough arguments\n";
@@ -74,19 +74,16 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-
   const char* numStr = argv[1];
   if (numStr[0] != '1' && numStr[0] != '2') {
     std::cerr << "First parameter is out of range\n";
     return 1;
   }
-
   
   if (numStr[1] != '\0') {
     std::cerr << "First parameter is not number\n";
     return 1;
   }
-
 
   const int num = numStr[0] - '0';
   const char* inputFileName = argv[2];
@@ -98,14 +95,52 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-
   std::ofstream output(outputFileName);
   if (!output.is_open()) {
     std::cerr << "Cannot create output file\n";
     return 1;
   }
-  
+
+  size_t rows = 0;
+  size_t cols = 0;
+  if (!(input >> rows >> cols)) {
+    std::cerr << "Cannot read matrix dimensions\n";
+    return 2;
+  }
+
+  if (rows == 0 && cols == 0) {
+    output << "0 0\n";
+    return 0;
+  }
+
+  const size_t maxStaticSize = 10000;
+  if (num == 1) {
+    if (rows * cols > maxStaticSize) {
+      std::cerr << "Matrix is too large for static array\n";
+      return 2;
+    }
+
+    int matrix[maxStaticSize];
+    for (size_t i = 0; i < rows; ++i) {
+      for (size_t j = 0; j < cols; ++j) {
+        size_t temp = 0;
+        if (!(input >> temp)) {
+          std::cerr << "Not enough elements for matrix\n";
+          return 2;
+        }
+        const size_t maxInt = static_cast<size_t>(std::numeric_limits<int>::max());
+        if (temp > maxInt) {
+          std::cerr << "Number out of int range\n";
+          return 2;
+        }
+        matrix[i * cols + j] = static_cast<int>(temp);
+      }
+    }
+
+    const int resultMin = burukov::countLocalMinima(matrix, rows, cols);
+    const int resultMax = burukov::countLocalMaxima(matrix, rows, cols);
+    output << resultMin << '\n' << resultMax << '\n';
+  }
 
   return 0;
-
 }
