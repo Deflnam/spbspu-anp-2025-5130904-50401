@@ -11,7 +11,6 @@ namespace burukov
   int countLocalMaxima(const int* matrix, size_t rows, size_t cols);
 }
 
-
 void burukov::destroyMatrix(int* matrix)
 {
   free(matrix);
@@ -23,7 +22,6 @@ int* burukov::createMatrix(size_t rows, size_t cols)
   matrix = static_cast<int*>(malloc(rows * cols * sizeof(int)));
   return matrix;
 }
-
 
 int burukov::countLocalMinima(const int* matrix, size_t rows, size_t cols)
 {
@@ -59,9 +57,6 @@ int burukov::countLocalMaxima(const int* matrix, size_t rows, size_t cols)
   return count;
 }
 
-
-
-
 int main(int argc, char* argv[])
 {
   if (argc != 4) {
@@ -79,7 +74,7 @@ int main(int argc, char* argv[])
     std::cerr << "First parameter is out of range\n";
     return 1;
   }
-  
+
   if (numStr[1] != '\0') {
     std::cerr << "First parameter is not number\n";
     return 1;
@@ -153,7 +148,7 @@ int main(int argc, char* argv[])
         std::cerr << "Memory allocation failed\n";
         return 2;
       }
-      
+
       for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
           size_t temp = 0;
