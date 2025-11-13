@@ -181,7 +181,7 @@ int main(int argc, char* argv[])
 
       const int resultMin = burukov::countLocalMinima(matrix, rows, cols);
       const int resultMax = burukov::countLocalMaxima(matrix, rows, cols);
-      output << resultMin << "\n " << resultMax << "\n";
+      output << resultMin << "\n" << resultMax << "\n";
       burukov::destroyMatrix(matrix);
     }
   } catch (const std::exception& e) {
