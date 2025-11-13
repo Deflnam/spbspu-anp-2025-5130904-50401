@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <fstream>
 #include <limits>
-
 namespace burukov
 {
 void destroyMatrix(int* matrix);
