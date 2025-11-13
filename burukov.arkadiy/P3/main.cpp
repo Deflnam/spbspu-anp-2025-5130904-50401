@@ -1,6 +1,7 @@
 #include "iostream"
 #include <cstddef>
 #include <cstdlib>
+#include <fstream>
 
 namespace burukov
 {
@@ -61,7 +62,50 @@ int burukov::countLocalMaxima(const int* matrix, size_t rows, size_t cols)
 
 
 
-int main()
+int main(int argc, char* argv[])
 {
+    if (argc != 4) {
+    std::cerr << "Error: ";
+    if (argc < 4) {
+      std::cerr << "Not enough arguments\n";
+    } else {
+      std::cerr << "Too many arguments\n";
+    }
+    return 1;
+  }
+
+
+  const char* numStr = argv[1];
+  if (numStr[0] != '1' && numStr[0] != '2') {
+    std::cerr << "First parameter is out of range\n";
+    return 1;
+  }
+
+  
+  if (numStr[1] != '\0') {
+    std::cerr << "First parameter is not number\n";
+    return 1;
+  }
+
+
+  const int num = numStr[0] - '0';
+  const char* inputFileName = argv[2];
+  const char* outputFileName = argv[3];
+
+  std::ifstream input(inputFileName);
+  if (!input.is_open()) {
+    std::cerr << "Cannot open input file\n";
+    return 1;
+  }
+
+
+  std::ofstream output(outputFileName);
+  if (!output.is_open()) {
+    std::cerr << "Cannot create output file\n";
+    return 1;
+  }
+  
+
+  return 0;
 
 }
