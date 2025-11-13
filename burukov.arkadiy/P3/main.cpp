@@ -101,74 +101,92 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  size_t rows = 0;
-  size_t cols = 0;
-  if (!(input >> rows >> cols)) {
-    std::cerr << "Cannot read matrix dimensions\n";
+  try {
+    size_t rows = 0;
+    size_t cols = 0;
+    if (!(input >> rows >> cols)) {
+      std::cerr << "Cannot read matrix dimensions\n";
+      return 2;
+    }
+
+    if (rows == 0 && cols == 0) {
+      output << "0 0\n";
+      return 0;
+    }
+
+    const size_t maxStaticSize = 10000;
+    if (num == 1) {
+      if (rows * cols > maxStaticSize) {
+        std::cerr << "Matrix is too large for static array\n";
+        return 2;
+      }
+
+      int matrix[maxStaticSize];
+      for (size_t i = 0; i < rows; ++i) {
+        for (size_t j = 0; j < cols; ++j) {
+          size_t temp = 0;
+          if (!(input >> temp)) {
+            if (input.eof()) {
+              std::cerr << "Not enough elements for matrix\n";
+              return 2;
+            } else if (input.fail()) {
+              input.clear();
+              std::cerr << "Unexpected input\n";
+              return 2;
+            }
+          }
+          const size_t maxInt = static_cast<size_t>(std::numeric_limits<int>::max());
+          if (temp > maxInt) {
+            std::cerr << "Number out of int range\n";
+            return 2;
+          }
+          matrix[i * cols + j] = static_cast<int>(temp);
+        }
+      }
+
+      const int resultMin = burukov::countLocalMinima(matrix, rows, cols);
+      const int resultMax = burukov::countLocalMaxima(matrix, rows, cols);
+      output << resultMin << '\n' << resultMax << '\n';
+    } else {
+      int* matrix = burukov::createMatrix(rows, cols);
+      if (matrix == nullptr) {
+        std::cerr << "Memory allocation failed\n";
+        return 2;
+      }
+      
+      for (size_t i = 0; i < rows; ++i) {
+        for (size_t j = 0; j < cols; ++j) {
+          size_t temp = 0;
+          if (!(input >> temp)) {
+            if (input.eof()) {
+              burukov::destroyMatrix(matrix);
+              std::cerr << "Not enough elements for matrix\n";
+              return 2;
+            } else if (input.fail()) {
+              input.clear();
+              burukov::destroyMatrix(matrix);
+              std::cerr << "Unexpected input\n";
+              return 2;
+            }
+          }
+          const size_t maxInt = static_cast<size_t>(std::numeric_limits<int>::max());
+          if (temp > maxInt) {
+            burukov::destroyMatrix(matrix);
+            std::cerr << "Number out of int range\n";
+            return 2;
+          }
+          matrix[i * cols + j] = static_cast<int>(temp);
+        }
+      }
+
+      const int resultMin = burukov::countLocalMinima(matrix, rows, cols);
+      const int resultMax = burukov::countLocalMaxima(matrix, rows, cols);
+      output << resultMin << "\n " << resultMax << "\n";
+      burukov::destroyMatrix(matrix);
+    }
+  } catch (const std::exception& e) {
+    std::cerr << "Exception: " << e.what() << "\n";
     return 2;
-  }
-
-  if (rows == 0 && cols == 0) {
-    output << "0 0\n";
-    return 0;
-  }
-
-  const size_t maxStaticSize = 10000;
-  if (num == 1) {
-    if (rows * cols > maxStaticSize) {
-      std::cerr << "Matrix is too large for static array\n";
-      return 2;
-    }
-
-    int matrix[maxStaticSize];
-    for (size_t i = 0; i < rows; ++i) {
-      for (size_t j = 0; j < cols; ++j) {
-        size_t temp = 0;
-        if (!(input >> temp)) {
-          std::cerr << "Not enough elements for matrix\n";
-          return 2;
-        }
-        const size_t maxInt = static_cast<size_t>(std::numeric_limits<int>::max());
-        if (temp > maxInt) {
-          std::cerr << "Number out of int range\n";
-          return 2;
-        }
-        matrix[i * cols + j] = static_cast<int>(temp);
-      }
-    }
-
-    const int resultMin = burukov::countLocalMinima(matrix, rows, cols);
-    const int resultMax = burukov::countLocalMaxima(matrix, rows, cols);
-    output << resultMin << '\n' << resultMax << '\n';
-  } else {
-    int* matrix = burukov::createMatrix(rows, cols);
-    if (matrix == nullptr) {
-      std::cerr << "Memory allocation failed\n";
-      return 2;
-    }
-    
-    for (size_t i = 0; i < rows; ++i) {
-      for (size_t j = 0; j < cols; ++j) {
-        size_t temp = 0;
-        if (!(input >> temp)) {
-          burukov::destroyMatrix(matrix);
-          std::cerr << "Not enough elements for matrix\n";
-          return 2;
-        }
-        const size_t maxInt = static_cast<size_t>(std::numeric_limits<int>::max());
-        if (temp > maxInt) {
-          burukov::destroyMatrix(matrix);
-          std::cerr << "Number out of int range\n";
-          return 2;
-        }
-        matrix[i * cols + j] = static_cast<int>(temp);
-      }
-    }
-
-    const int resultMin = burukov::countLocalMinima(matrix, rows, cols);
-    const int resultMax = burukov::countLocalMaxima(matrix, rows, cols);
-    output << resultMin << ' ' << resultMax << '\n';
-    burukov::destroyMatrix(matrix);
   }
 
   return 0;
