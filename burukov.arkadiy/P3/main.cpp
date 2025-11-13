@@ -140,6 +140,35 @@ int main(int argc, char* argv[])
     const int resultMin = burukov::countLocalMinima(matrix, rows, cols);
     const int resultMax = burukov::countLocalMaxima(matrix, rows, cols);
     output << resultMin << '\n' << resultMax << '\n';
+  } else {
+    int* matrix = burukov::createMatrix(rows, cols);
+    if (matrix == nullptr) {
+      std::cerr << "Memory allocation failed\n";
+      return 2;
+    }
+    
+    for (size_t i = 0; i < rows; ++i) {
+      for (size_t j = 0; j < cols; ++j) {
+        size_t temp = 0;
+        if (!(input >> temp)) {
+          burukov::destroyMatrix(matrix);
+          std::cerr << "Not enough elements for matrix\n";
+          return 2;
+        }
+        const size_t maxInt = static_cast<size_t>(std::numeric_limits<int>::max());
+        if (temp > maxInt) {
+          burukov::destroyMatrix(matrix);
+          std::cerr << "Number out of int range\n";
+          return 2;
+        }
+        matrix[i * cols + j] = static_cast<int>(temp);
+      }
+    }
+
+    const int resultMin = burukov::countLocalMinima(matrix, rows, cols);
+    const int resultMax = burukov::countLocalMaxima(matrix, rows, cols);
+    output << resultMin << ' ' << resultMax << '\n';
+    burukov::destroyMatrix(matrix);
   }
 
   return 0;
