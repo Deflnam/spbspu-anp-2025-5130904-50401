@@ -86,7 +86,7 @@ bool burukov::readMatrixElement(std::ifstream& input, int& value, int* dynamicMa
       return false;
     }
   }
-  
+
   const size_t maxInt = static_cast<size_t>(std::numeric_limits<int>::max());
   if (temp > maxInt)
   {
@@ -97,14 +97,14 @@ bool burukov::readMatrixElement(std::ifstream& input, int& value, int* dynamicMa
     }
     return false;
   }
-  
+
   value = static_cast<int>(temp);
   return true;
 }
 
 int main(int argc, char* argv[])
 {
-  if (argc != 4) 
+  if (argc != 4)
   {
     std::cerr << "Error: " << (argc < 4 ? "Not enough arguments" : "Too many arguments") << "\n";
     return 1;
@@ -206,7 +206,6 @@ int main(int argc, char* argv[])
           matrix[i * cols + j] = value;
         }
       }
-
       const int resultMin = burukov::countLocalMinima(matrix, rows, cols);
       const int resultMax = burukov::countLocalMaxima(matrix, rows, cols);
       output << resultMin << "\n";
@@ -219,6 +218,5 @@ int main(int argc, char* argv[])
     std::cerr << "Exception: " << e.what() << "\n";
     return 2;
   }
-
   return 0;
 }
