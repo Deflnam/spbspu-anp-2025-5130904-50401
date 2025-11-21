@@ -6,16 +6,10 @@
 
 namespace burukov
 {
-void destroyMatrix(int* matrix);
 int* createMatrix(size_t rows, size_t cols);
 int countLocalMinima(const int* matrix, size_t rows, size_t cols);
 int countLocalMaxima(const int* matrix, size_t rows, size_t cols);
 bool readMatrixElement(std::ifstream& input, int& value, int* dynamicMatrix = nullptr);
-}
-
-void burukov::destroyMatrix(int* matrix)
-{
-  free(matrix);
 }
 
 int* burukov::createMatrix(size_t rows, size_t cols)
@@ -77,7 +71,7 @@ bool burukov::readMatrixElement(std::ifstream& input, int& value, int* dynamicMa
       std::cerr << "Not enough elements for matrix" << "\n";
       if (dynamicMatrix != nullptr)
       {
-        burukov::destroyMatrix(dynamicMatrix);
+        free(dynamicMatrix);
       }
       return false;
     }
@@ -87,7 +81,7 @@ bool burukov::readMatrixElement(std::ifstream& input, int& value, int* dynamicMa
       std::cerr << "Unexpected input" << "\n";
       if (dynamicMatrix != nullptr)
       {
-        burukov::destroyMatrix(dynamicMatrix);
+        free(dynamicMatrix);
       }
       return false;
     }
@@ -99,7 +93,7 @@ bool burukov::readMatrixElement(std::ifstream& input, int& value, int* dynamicMa
     std::cerr << "Number out of int range" << "\n";
     if (dynamicMatrix != nullptr)
     {
-      burukov::destroyMatrix(dynamicMatrix);
+      free(dynamicMatrix);
     }
     return false;
   }
@@ -217,7 +211,7 @@ int main(int argc, char* argv[])
       const int resultMax = burukov::countLocalMaxima(matrix, rows, cols);
       output << resultMin << "\n";
       output << resultMax << "\n";
-      burukov::destroyMatrix(matrix);
+      free(matrix);
     }
   }
   catch (const std::exception& e)
