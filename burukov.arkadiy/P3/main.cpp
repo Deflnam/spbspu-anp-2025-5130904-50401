@@ -3,12 +3,14 @@
 #include <cstdlib>
 #include <fstream>
 #include <limits>
+
 namespace burukov
 {
 void destroyMatrix(int* matrix);
 int* createMatrix(size_t rows, size_t cols);
 int countLocalMinima(const int* matrix, size_t rows, size_t cols);
 int countLocalMaxima(const int* matrix, size_t rows, size_t cols);
+bool readMatrixElement(std::ifstream& input, int& value, int* dynamicMatrix = nullptr);
 }
 
 void burukov::destroyMatrix(int* matrix)
@@ -63,6 +65,47 @@ int burukov::countLocalMaxima(const int* matrix, size_t rows, size_t cols)
     }
   }
   return count;
+}
+
+bool burukov::readMatrixElement(std::ifstream& input, int& value, int* dynamicMatrix)
+{
+  size_t temp = 0;
+  if (!(input >> temp))
+  {
+    if (input.eof())
+    {
+      std::cerr << "Not enough elements for matrix" << "\n";
+      if (dynamicMatrix != nullptr)
+      {
+        burukov::destroyMatrix(dynamicMatrix);
+      }
+      return false;
+    }
+    else if (input.fail())
+    {
+      input.clear();
+      std::cerr << "Unexpected input" << "\n";
+      if (dynamicMatrix != nullptr)
+      {
+        burukov::destroyMatrix(dynamicMatrix);
+      }
+      return false;
+    }
+  }
+  
+  const size_t maxInt = static_cast<size_t>(std::numeric_limits<int>::max());
+  if (temp > maxInt)
+  {
+    std::cerr << "Number out of int range" << "\n";
+    if (dynamicMatrix != nullptr)
+    {
+      burukov::destroyMatrix(dynamicMatrix);
+    }
+    return false;
+  }
+  
+  value = static_cast<int>(temp);
+  return true;
 }
 
 int main(int argc, char* argv[])
@@ -134,28 +177,12 @@ int main(int argc, char* argv[])
       {
         for (size_t j = 0; j < cols; ++j)
         {
-          size_t temp = 0;
-          if (!(input >> temp))
+          int value = 0;
+          if (!burukov::readMatrixElement(input, value))
           {
-            if (input.eof())
-            {
-              std::cerr << "Not enough elements for matrix" << "\n";
-              return 2;
-            }
-            else if (input.fail())
-            {
-              input.clear();
-              std::cerr << "Unexpected input" << "\n";
-              return 2;
-            }
-          }
-          const size_t maxInt = static_cast<size_t>(std::numeric_limits<int>::max());
-          if (temp > maxInt)
-          {
-            std::cerr << "Number out of int range" << "\n";
             return 2;
           }
-          matrix[i * cols + j] = static_cast<int>(temp);
+          matrix[i * cols + j] = value;
         }
       }
 
@@ -177,31 +204,12 @@ int main(int argc, char* argv[])
       {
         for (size_t j = 0; j < cols; ++j)
         {
-          size_t temp = 0;
-          if (!(input >> temp))
+          int value = 0;
+          if (!burukov::readMatrixElement(input, value, matrix))
           {
-            if (input.eof())
-            {
-              burukov::destroyMatrix(matrix);
-              std::cerr << "Not enough elements for matrix" << "\n";
-              return 2;
-            }
-            else if (input.fail())
-            {
-              input.clear();
-              burukov::destroyMatrix(matrix);
-              std::cerr << "Unexpected input" << "\n";
-              return 2;
-            }
-          }
-          const size_t maxInt = static_cast<size_t>(std::numeric_limits<int>::max());
-          if (temp > maxInt)
-          {
-            burukov::destroyMatrix(matrix);
-            std::cerr << "Number out of int range" << "\n";
             return 2;
           }
-          matrix[i * cols + j] = static_cast<int>(temp);
+          matrix[i * cols + j] = value;
         }
       }
 
