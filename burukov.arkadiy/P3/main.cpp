@@ -67,17 +67,9 @@ int burukov::countLocalMaxima(const int* matrix, size_t rows, size_t cols)
 
 int main(int argc, char* argv[])
 {
-  if (argc != 4)
+  if (argc != 4) 
   {
-    std::cerr << "Error: ";
-    if (argc < 4)
-    {
-      std::cerr << "Not enough arguments" << "\n";
-    }
-    else
-    {
-      std::cerr << "Too many arguments" << "\n";
-    }
+    std::cerr << "Error: " << (argc < 4 ? "Not enough arguments" : "Too many arguments") << "\n";
     return 1;
   }
 
